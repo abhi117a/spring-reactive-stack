@@ -25,3 +25,11 @@ spring:
       port: 27017
       host: localhost
       database: local
+---
+spring:
+  profiles: test
+  data:
+    mongodb:
+      port: 27017
+      host: localhost
+      database: local

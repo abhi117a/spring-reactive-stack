@@ -4,6 +4,7 @@ import com.learnreact.Spring.React.Demo.document.Item;
 import com.learnreact.Spring.React.Demo.repository.ItemReactiveRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 
@@ -12,6 +13,7 @@ import java.util.List;
 
 /** @author a0r00rf */
 @Component
+@Profile("!test")
 public class ItemDataInitializer implements CommandLineRunner {
 
   @Autowired ItemReactiveRepository itemReactiveRepository;
