@@ -15,6 +15,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import java.util.Arrays;
@@ -107,5 +108,48 @@ public class ItemControllerTest {
             .returnResult(Item.class)
             .getResponseBody();
     StepVerifier.create(itemFlux).expectSubscription().expectNextCount(5).verifyComplete();
+  }
+
+  @Test
+  public void getOneItem() {
+    webTestClient
+        .get()
+        .uri(ItemConstants.ITEM_END_POINT_V1.concat("/{id}"), "ABC")
+        .exchange()
+        .expectStatus()
+        .isOk()
+        .expectBody()
+        .jsonPath("$.price", 10001.0);
+  }
+
+  @Test
+  public void getNoItem() {
+    webTestClient
+        .get()
+        .uri(ItemConstants.ITEM_END_POINT_V1.concat("/{id}"), "DEF")
+        .exchange()
+        .expectStatus()
+        .isNoContent();
+  }
+
+  @Test
+  public void createItem() {
+
+    Item item = new Item(null, "iphoneX", 999.90);
+    webTestClient
+        .post()
+        .uri(ItemConstants.ITEM_END_POINT_V1)
+        .contentType(MediaType.APPLICATION_JSON)
+        .body(Mono.just(item), Item.class)
+        .exchange()
+        .expectStatus()
+        .isCreated()
+        .expectBody()
+        .jsonPath("$.id")
+        .isNotEmpty()
+        .jsonPath("$.description")
+        .isEqualTo("iphoneX")
+        .jsonPath("$.price")
+        .isEqualTo(999.90);
   }
 }
