@@ -152,4 +152,46 @@ public class ItemControllerTest {
         .jsonPath("$.price")
         .isEqualTo(999.90);
   }
+
+  @Test
+  public void deleteItem() {
+
+    webTestClient
+        .delete()
+        .uri(ItemConstants.ITEM_END_POINT_V1.concat("/{id}"), "ABC")
+        .accept(MediaType.APPLICATION_JSON)
+        .exchange()
+        .expectStatus()
+        .isOk()
+        .expectBody(Void.class);
+  }
+
+  @Test
+  public void updateItem() {
+
+    Double price = 129.99;
+    Item item = new Item(null, "beatsIphone", 999.90);
+    webTestClient
+        .put()
+        .uri(ItemConstants.ITEM_END_POINT_V1.concat("/{id}"), "ABC")
+        .contentType(MediaType.APPLICATION_JSON)
+        .body(Mono.just(item), Item.class)
+        .exchange()
+        .expectStatus()
+        .isOk()
+        .expectBody()
+        .jsonPath("$.price", price);
+  }
+
+  @Test
+  public void udpateItemNotFound() {
+    Item item = new Item(null, "beatsIphone", 999.90);
+    webTestClient
+        .put()
+        .uri(ItemConstants.ITEM_END_POINT_V1.concat("/{id}"), "XAX")
+        .body(Mono.just(item), Item.class)
+        .exchange()
+        .expectStatus()
+        .isNotFound();
+  }
 }
